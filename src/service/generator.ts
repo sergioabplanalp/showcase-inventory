@@ -3,7 +3,7 @@ import * as repository from '../repository/inventory-repository';
 import * as rabbitClient from '../client/messaging/rabbit-client';
 import * as cloudinaryClient from '../client/storage/cloudinary-client';
 import {Product} from "../types";
-import {PayloadType, ProductCreatedEvent} from "../events";
+import {PayloadType, ProductCreatedEvent, ProductUpdatedEvent} from "../events";
 
 export const generate: () => Promise<void> = async (): Promise<void> => {
   const productsExist: boolean = await repository.productsExist();
@@ -11,26 +11,34 @@ export const generate: () => Promise<void> = async (): Promise<void> => {
     return;
   }
 
-  const products: Product[] = openAIClient.generateProducts();
-  products.forEach((product: Product) => {
-    product.imageUrl = generateImage(product);
-
+  openAIClient.generateProducts().forEach((product: Product) => {
     repository.save(product);
-
     const event: ProductCreatedEvent = {
       id: product.id,
       name: product.name,
       description: product.description,
-      imageUrl: product.imageUrl,
       price: product.price,
     };
 
     rabbitClient.sendMessage(PayloadType.PRODUCT_CREATED, event);
+
+    generateImage(product);
   });
 };
 
-function generateImage(product: Product): string {
+function generateImage(product: Product): void {
   const prompt: string = product.name + ' - ' + product.description;
-  const generatedImageUrl: string = openAIClient.generateImage(prompt);
-  return cloudinaryClient.uploadImage(generatedImageUrl);
+  openAIClient.generateImage(prompt)
+    .then(generatedImageUrl => cloudinaryClient.uploadImage(generatedImageUrl))
+    .then(uploadedImageUrl => repository.save({...product, imageUrl: uploadedImageUrl}))
+    .then(product => {
+      const event: ProductUpdatedEvent = {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        imageUrl: product.imageUrl,
+        price: product.price,
+      };
+      rabbitClient.sendMessage(PayloadType.PRODUCT_UPDATED, event);
+    });
 }

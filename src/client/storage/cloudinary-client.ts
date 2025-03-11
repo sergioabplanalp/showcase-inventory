@@ -1,3 +1,3 @@
-export function uploadImage(imageUrl: string): string {
-  return imageUrl;
+export function uploadImage(imageUrl: string): Promise<string> {
+  return new Promise<string>(resolve => resolve(imageUrl));
 }

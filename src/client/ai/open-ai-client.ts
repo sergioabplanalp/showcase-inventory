@@ -23,12 +23,12 @@ export function generateProducts(): Product[] {
   ];
 }
 
-export function generateImage(prompt: string): string {
+export function generateImage(prompt: string): Promise<string> {
   const productImages = {
     ['Inverted Umbrella Hat - A hat with an umbrella that stores water instead of repelling it.']: 'https://res.cloudinary.com/dwm70yyhu/image/upload/v1738440057/a4u63kgnp0j2ingu8vdj.png',
     ['Pet Rock Whisperer Course - A comprehensive online course teaching you how to communicate with your pet rock.']: 'https://res.cloudinary.com/dwm70yyhu/image/upload/v1738440082/amslvkyzzmiom5gjzvst.png',
     ['DIY Bread Shoes Kit - A kit containing everything you need to bake your own shoes out of bread.']: 'https://res.cloudinary.com/dwm70yyhu/image/upload/v1738440109/rcgv94gsydku2eoyoki9.png',
   };
 
-  return productImages[prompt];
+  return new Promise(resolve => resolve(productImages[prompt]));
 }

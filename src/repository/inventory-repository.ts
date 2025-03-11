@@ -13,8 +13,9 @@ export async function productsExist(): Promise<boolean> {
   return keys.length !== 0;
 }
 
-export async function save(product: Product): Promise<number> {
-  return client.hSet(`product:${product.id}`, product);
+export async function save(product: Product): Promise<Product> {
+  return client.hSet(`product:${product.id}`, product)
+    .then(() => new Promise(resolve => resolve(product)));
 }
 
 export const removeAll: () => Promise<void> = async (): Promise<void> => {
