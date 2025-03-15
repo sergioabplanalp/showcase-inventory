@@ -1,7 +1,8 @@
 import {createClient} from "redis";
 import {Product} from "../types";
+import config from '../../config';
 
-const client = createClient();
+const client = createClient({url: `redis://${config.redis.host}:${config.redis.port}`});
 
 client.on('error', err => console.log('Redis client error', err));
 (async function () {

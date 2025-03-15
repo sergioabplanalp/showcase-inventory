@@ -1,8 +1,5 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import * as productGenerator from "./src/service/generator";
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
