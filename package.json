@@ -1,11 +1,11 @@
 {
-  "name": "yyy",
+  "name": "inventory-service",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run build && npm run start",
-    "build": "npx tsc",
+    "dev": "npm run build && NODE_ENV=dev npm run start",
+    "build": "npx tsc && cp .env* dist",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
