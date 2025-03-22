@@ -29,9 +29,9 @@ export const generate: () => Promise<void> = async (): Promise<void> => {
 function generateImage(product: Product): void {
   const prompt: string = product.name + ' - ' + product.description;
   openAIClient.generateImage(prompt)
-    .then(generatedImageUrl => cloudinaryClient.uploadImage(generatedImageUrl))
-    .then(uploadedImageUrl => repository.save({...product, imageUrl: uploadedImageUrl}))
-    .then(product => {
+    .then((generatedImageUrl: string): Promise<string> => cloudinaryClient.uploadImage(generatedImageUrl))
+    .then((uploadedImageUrl: string): Promise<Product> => repository.save({...product, imageUrl: uploadedImageUrl}))
+    .then((product: Product): void => {
       const event: ProductUpdatedEvent = {
         id: product.id,
         name: product.name,

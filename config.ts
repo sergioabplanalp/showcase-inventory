@@ -3,6 +3,10 @@ import fs from "node:fs";
 dotenv.config({ path: __dirname + `/.env.${process.env.NODE_ENV}` });
 
 export default {
+  app: {
+    port: 8080
+  },
+
   chatgpt: {
     secretKey: readSecret(process.env.CHATGPT_SECRET_KEY_FILE)
   },
